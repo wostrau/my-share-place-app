@@ -1,20 +1,28 @@
 const path = require('path');
-const CleanPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   mode: 'development',
   entry: {
-    'SharePlace': './src/SharePlace.js',
-    'MyPlace': './src/MyPlace.js',
+    SharePlace: './src/SharePlace.js',
+    MyPlace: './src/MyPlace.js',
   },
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist', 'assets', 'scripts'),
-    publicPath: 'assets/scripts/'
+    publicPath: 'assets/scripts/',
   },
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'eval-cheap-module-source-map',
   devServer: {
-    contentBase: './dist'
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
+    client: {
+      overlay: true, // This displays build errors on the webpage
+    },
+    devMiddleware: {
+      publicPath: '/assets/scripts/', // Adjust this path as needed
+    },
   },
   module: {
     rules: [
@@ -27,13 +35,13 @@ module.exports = {
             presets: [
               [
                 '@babel/preset-env',
-                { useBuiltIns: 'usage', corejs: { version: 3 } }
-              ]
-            ]
-          }
-        }
-      }
-    ]
+                { useBuiltIns: 'usage', corejs: { version: 3 } },
+              ],
+            ],
+          },
+        },
+      },
+    ],
   },
-  plugins: [new CleanPlugin.CleanWebpackPlugin()]
+  plugins: [new CleanWebpackPlugin()],
 };
