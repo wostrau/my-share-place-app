@@ -2,12 +2,39 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta
+      http-equiv="X-UA-Compatible"
+      content="ie=edge"
+    />
     <title>Share a Place</title>
-    <link rel="stylesheet" href="assets/styles/app.css" />
-    <link rel="stylesheet" href="assets/styles/share-place.css" />
-    <script src="assets/scripts/SharePlace.js" defer type="module" crossorigin="use-credentials"></script>
+    <link
+      rel="stylesheet"
+      href="assets/styles/app.css"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/styles/share-place.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/css/ol.css"
+      type="text/css"
+    />
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCueuEMBmaAK6XUl6pfsL0J5NTF6HwpjtY"
+      defer
+    ></script>
+    <script
+      src="assets/scripts/SharePlace.js"
+      defer
+      type="module"
+      crossorigin="use-credentials"
+    ></script>
   </head>
   <body>
     <template id="modal-template">
@@ -40,7 +67,12 @@
         readonly
         value="Select a place to get a sharable link."
       />
-      <button id="share-btn" disabled>Share Place</button>
+      <button
+        id="share-btn"
+        disabled
+      >
+        Share Place
+      </button>
     </section>
 
     <section id="place-data">

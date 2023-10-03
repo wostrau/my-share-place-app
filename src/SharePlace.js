@@ -1,12 +1,47 @@
 import { Modal } from './UI/Modal';
+import { Map } from './UI/Map';
+import { getAddressFromCoords, getCoordsFromAddress } from './Utility/Location';
 
 class PlaceFinder {
   constructor() {
     const addressForm = document.querySelector('form');
     const locateUserBtn = document.getElementById('locate-btn');
+    this.shareBtn = document.getElementById('share-btn');
 
-    locateUserBtn.addEventListener('click', this.locateUserHandler);
-    addressForm.addEventListener('submit', this.findAddressHandler);
+    addressForm.addEventListener('submit', this.findAddressHandler.bind(this));
+    locateUserBtn.addEventListener('click', this.locateUserHandler.bind(this));
+    this.shareBtn.addEventListener('click', this.sharePlaceHandler);
+  }
+
+  sharePlaceHandler() {
+    const sharedLinkInputElement = document.getElementById('share-link');
+
+    if (!navigator.clipboard) {
+
+      return;
+    }
+
+    navigator.clipboard.writeText(sharedLinkInputElement.value)
+      .then(() => {
+        alert('Copied into clipboard!');
+      })
+      .catch(error => {
+        console.log(error);
+        sharedLinkInputElement.select();
+      });
+  }
+
+  selectPlace(coordinates, address) {
+    if (this.map) {
+      this.map.render();
+    } else {
+      this.map = new Map(coordinates);
+    }
+
+    this.shareBtn.disabled = false;
+
+    const sharedLinkInputElement = document.getElementById('share-link');
+    sharedLinkInputElement.value = `${location.origin}/my-place?address=${encodeURI(address)}&lat=${coordinates.lat}&lng=${coordinates.lng}`;
   }
 
   locateUserHandler() {
@@ -19,13 +54,14 @@ class PlaceFinder {
     const modal = new Modal('loading-modal-content', 'Loading location - please wait!');
     modal.show();
     navigator.geolocation.getCurrentPosition(
-      successResult => {
+      async (successResult) => {
         modal.hide();
         const coordinates = {
           lat: successResult.coords.latitude + Math.random() * 50,
           lng: successResult.coords.longitude + Math.random() * 50,
         };
-        console.log(coordinates);
+        const address = await getAddressFromCoords(coordinates);
+        this.selectPlace(coordinates, address);
       },
       error => {
         modal.hide();
@@ -36,7 +72,28 @@ class PlaceFinder {
     );
   }
 
-  findAddressHandler() {}
+  async findAddressHandler(event) {
+    event.preventDefault();
+    const address = event.target.querySelector('input').value;
+
+    if (!address || address.trim().length === 0) {
+      alert('Invalid address entered - please try again!');
+      return;
+    }
+
+    const modal = new Modal('loading-modal-content', 'Loading location - please wait!');
+
+    modal.show();
+
+    try {
+      const coordinates = await getAddressFromCoords(address);
+      this.selectPlace(coordinates);
+    } catch (err) {
+      alert(err.message);
+    }
+
+    modal.hide();
+  }
 }
 
 const placeFinder = new PlaceFinder();
